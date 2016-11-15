@@ -1,31 +1,26 @@
+
 'use strict';
 
-module.exports.goodbye = (event, context, callback) => {
-  const response = {
-    statusCode: 200,
-    body: JSON.stringify({
-      message: 'Go home! Your function executed successfully!',
-      input: event,
-    }),
-  };
+var AWS = require('aws-sdk')
 
-  callback(null, response);
+var s3bucket = new AWS.S3({params: {Bucket: 'my-user-input-dawilcox'}});
 
-  // Use this code if you don't use the http event with the LAMBDA-PROXY integration
-  // callback(null, { message: 'Go Serverless v1.0! Your function executed successfully!', event });
-};
 
-module.exports.hello = (event, context, callback) => {
-  const response = {
-    statusCode: 200,
-    body: JSON.stringify({
-      message: 'Go Serverless v1.0! Your function executed successfully!',
-      input: event,
-    }),
-  };
+function guid() {
+    function s4() {
+	return Math.floor((1 + Math.random()) * 0x10000)
+	    .toString(16)
+	    .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+	s4() + '-' + s4() + s4() + s4();
+}
 
-  callback(null, response);
 
-  // Use this code if you don't use the http event with the LAMBDA-PROXY integration
-  // callback(null, { message: 'Go Serverless v1.0! Your function executed successfully!', event });
+module.exports.textmessagecreate = (event, context, callback) => {
+    if ( !event || !event.input.queryStringParameters || !event.input.queryStringParameters.textToUpload ) {
+	context.fail({message: "Please specify textToUpload on the query string."});
+    } else {
+	context.succeed({message: "Please specify textToUpload on the query string."});
+    }
 };

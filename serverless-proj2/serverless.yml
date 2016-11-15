@@ -47,21 +47,15 @@ provider:
 #  artifact: my-service-code.zip
 
 functions:
-  goodbye:
-    handler: handler.goodbye
-    events:
-      - http:
-          path: users/delete
-          method: get
-  hello:
-    handler: handler.hello
+  textmessagecreate:
+    handler: handler.textmessagecreate
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
     events:
       - http:
-          path: users/create
+          path: textmessage/create
           method: get
 #      - s3: ${env:BUCKET}
 #      - schedule: rate(10 minutes)
@@ -74,7 +68,7 @@ resources:
     NewResource:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: my-new-bucket-aasdfasdfasdfasdf
+        BucketName: my-text-messages2-dawilcox
 #  Outputs:
 #     NewOutput:
 #       Description: "Description for the output"
