@@ -30,9 +30,15 @@ provider:
     - Effect: "Allow"
       Action:
         - "s3:PutObject"
+        - "s3:GetObject"
       Resource:
-        - "arn:aws:s3:::my-text-messages3-dawilcox/*"
-#          - - "arn:aws:s3:::my-text-messages3-dawilcox" 
+        - "arn:aws:s3:::my-text-messages9-dawilcox/*"
+    - Effect: "Allow"
+      Action:
+        - dynamodb:PutItem
+      Resource:
+        - "arn:aws:dynamodb:us-east-1:*:table/dawilcox-character-counts"
+#          - - "arn:aws:s3:::my-text-messages9-dawilcox" 
 #      Resource:
 #        Fn::Join:
 #          - ""
@@ -56,8 +62,26 @@ functions:
     handler: handler.textmessageprocess
     events:
       - s3:
-          bucket: my-text-messages3-dawilcox
+          bucket: my-text-messages9-dawilcox
           event: s3:ObjectCreated:*
+
+
+resources:
+  Resources:
+    DawilcoxCharacterCounts:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        KeySchema:
+          - AttributeName: "id"
+            KeyType: "HASH"
+        AttributeDefinitions:
+          - AttributeName: "id"
+            AttributeType: "S"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: "dawilcox-character-counts"
+        
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
@@ -70,12 +94,12 @@ functions:
 #      - sns: greeter-topic
 #      - stream: arn:aws:dynamodb:region:XXXXXX:table/foo/stream/1970-01-01T00:00:00.000
 
-resources:
-  Resources:
-    NewResource:
-      Type: AWS::S3::Bucket
-      Properties:
-        BucketName: my-text-messages3-dawilcox
+#resources:
+#  Resources:
+#    NewResource:
+#      Type: AWS::S3::Bucket
+#      Properties:
+#        BucketName: my-text-messages3-dawilcox
 
 
 # you can add CloudFormation resource templates here
