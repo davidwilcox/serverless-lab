@@ -17,6 +17,9 @@ service: aws-nodejs # NOTE: update this with your service name
 # Check out our docs for more details
 # frameworkVersion: "=X.X.X"
 
+custom:
+  s3BucketPrefix: "my-text-messages9"
+
 provider:
   name: aws
   runtime: nodejs4.3
@@ -32,12 +35,21 @@ provider:
         - "s3:PutObject"
         - "s3:GetObject"
       Resource:
-        - "arn:aws:s3:::my-text-messages9-dawilcox/*"
+        Fn::Join:
+          - ""
+          - - "arn:aws:s3:::"
+            - ${self:custom.s3BucketPrefix}
+            - ${env:USER}
+            - "/*"
     - Effect: "Allow"
       Action:
         - dynamodb:PutItem
-      Resource:
-        - "arn:aws:dynamodb:us-east-1:*:table/dawilcox-character-counts"
+      Resource: arn:aws:dynamodb:us-east-1:*:table/${env:USER}-character-counts
+#        Fn::Join:
+#          - ""
+#          - - "arn:aws:dynamodb:us-east-1:*:table/"
+#            - "-character-counts"
+#            - Ref: ServerlessDeploymentBucket
 #          - - "arn:aws:s3:::my-text-messages9-dawilcox" 
 #      Resource:
 #        Fn::Join:
@@ -62,7 +74,12 @@ functions:
     handler: handler.textmessageprocess
     events:
       - s3:
-          bucket: my-text-messages9-dawilcox
+          bucket:
+            Fn::Join:
+              - ""
+              -
+                - ${self:custom.s3BucketPrefix}
+                - ${env:USER}
           event: s3:ObjectCreated:*
 
 
