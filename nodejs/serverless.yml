@@ -17,9 +17,6 @@ service: aws-nodejs # NOTE: update this with your service name
 # Check out our docs for more details
 # frameworkVersion: "=X.X.X"
 
-custom:
-  s3BucketPrefix: "my-text-messages10"
-
 provider:
   name: aws
   runtime: nodejs4.3
@@ -46,17 +43,6 @@ provider:
         - dynamodb:PutItem
       Resource:
         - "arn:aws:dynamodb:us-east-1:272016194640:table/dawilcox-character-counts"
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:dynamodb:us-east-1:*:table/"
-#            - "-character-counts"
-#            - Ref: ServerlessDeploymentBucket
-#          - - "arn:aws:s3:::my-text-messages9-dawilcox" 
-#      Resource:
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:s3:::"
-#            - "Ref" : "ServerlessDeploymentBucket"
 
 # you can add packaging information here
 #package:
@@ -75,16 +61,6 @@ functions:
     handler: handler.textmessageprocess
     events:
       - sns: dispatch-events-dawilcox
-#      - s3:
-#          bucket: my-text-messages9-dawilcox
-#          bucket:
-#            Fn::Join:
-#              - ""
-#              -
-#                - ${self:custom.s3BucketPrefix}
-#                - ${env:USER}
-#          event: s3:ObjectCreated:*
-
 
 resources:
   Resources:
@@ -101,18 +77,6 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         TableName: "dawilcox-character-counts"
-        
-#    The following are a few example events you can configure
-#    NOTE: Please make sure to change your handler code to work with those events
-#    Check the event documentation for details
-#    events:
-#      - http:
-#          path: users/create
-#          method: get
-#      - s3: ${env:BUCKET}
-#      - schedule: rate(10 minutes)
-#      - sns: greeter-topic
-#      - stream: arn:aws:dynamodb:region:XXXXXX:table/foo/stream/1970-01-01T00:00:00.000
 
     MyMessages:
       Type: AWS::S3::Bucket
