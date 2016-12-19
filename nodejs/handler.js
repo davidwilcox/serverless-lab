@@ -14,7 +14,7 @@ function guid() {
 	s4() + '-' + s4() + s4() + s4();
 }
 
-var bucket_name = 'my-text-messages10-dawilcox';
+var bucket_name = 'my-text-messagess-dawilcox';
 var s3bucket = new AWS.S3({params: {Bucket: bucket_name}});
 
 module.exports.textmessagecreate = (event, context, callback) => {

@@ -32,13 +32,13 @@ provider:
         - "s3:PutObject"
         - "s3:GetObject*"
       Resource:
-        - "arn:aws:s3:::*"
+        - "arn:aws:s3:::my-text-messagess-dawilcox"
     - Effect: "Allow"
       Action:
         - "s3:PutObject"
         - "s3:GetObject*"
       Resource:
-        - "arn:aws:s3:::*/*"
+        - "arn:aws:s3:::my-text-messagess-dawilcox/*"
     - Effect: "Allow"
       Action:
         - "sns:Publish"
@@ -87,4 +87,4 @@ resources:
     MyMessages:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: my-text-messages10-dawilcox
+        BucketName: my-text-messagess-dawilcox
