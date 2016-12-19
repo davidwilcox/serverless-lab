@@ -1,6 +1,7 @@
 'use strict';
 
 var AWS = require('aws-sdk');
+var sns = new AWS.SNS();
 
 
 function guid() {
@@ -13,7 +14,7 @@ function guid() {
 	s4() + '-' + s4() + s4() + s4();
 }
 
-var bucket_name = 'my-text-messages9-dawilcox';
+var bucket_name = 'my-text-messages10-dawilcox';
 var s3bucket = new AWS.S3({params: {Bucket: bucket_name}});
 
 module.exports.textmessagecreate = (event, context, callback) => {
@@ -26,11 +27,19 @@ module.exports.textmessagecreate = (event, context, callback) => {
 	Body: event.queryStringParameters.textToUpload},
 		    function(err, data) {
 			if ( err ) {
-			    callback(err);
+			    return callback(err);
 			} else {
-			    callback(null,{
-				statusCode: 200,
-				body: JSON.stringify(data)
+			    sns.publish({
+				Message: guid() + ".txt",
+				TopicArn: "arn:aws:sns:us-east-1:272016194640:dispatch-events-dawilcox"
+			    }, function(err, data) {
+				if ( err ) {
+				    return callback(err);
+				}
+				return callback(null,{
+				    statusCode: 200,
+				    body: JSON.stringify(data)
+				});
 			    });
 			}
 		    });
@@ -41,23 +50,31 @@ module.exports.textmessagecreate = (event, context, callback) => {
 var docClient = new AWS.DynamoDB.DocumentClient();
 
 module.exports.textmessageprocess = (event, context, callback) => {
-    var srcBucket = event.Records[0].s3.bucket.name;
-    // Object key may have spaces or unicode non-ASCII characters.
-    var srcKey    =
-	decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, " "));
+    /*
+    console.log(JSON.stringify(event));
+    return callback(null, {
+	statusCode: 200,
+	input: JSON.stringify({
+	    event
+	})
+    });
+    */
+    var filename = event.Records[0].Sns.Message;
 
     var s3GetParams = {
-	Bucket: bucket_name,
-	Key: srcKey
+	Key: filename
     };
+    console.log(s3GetParams);
     s3bucket.getObject(s3GetParams, function(err, data) {
+	console.log(err);
+	console.log(data);
 	if ( err ) {
 	    return callback(err);
 	} else {
 	    var dynamoParams = {
 		TableName: "dawilcox-character-counts",
 		Item: {
-		    id: srcKey,
+		    id: filename,
 		    count: parseInt(data.ContentLength)
 		}
 	    };

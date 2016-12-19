@@ -18,7 +18,7 @@ service: aws-nodejs # NOTE: update this with your service name
 # frameworkVersion: "=X.X.X"
 
 custom:
-  s3BucketPrefix: "my-text-messages9"
+  s3BucketPrefix: "my-text-messages10"
 
 provider:
   name: aws
@@ -35,16 +35,17 @@ provider:
         - "s3:PutObject"
         - "s3:GetObject"
       Resource:
-        Fn::Join:
-          - ""
-          - - "arn:aws:s3:::"
-            - ${self:custom.s3BucketPrefix}
-            - ${env:USER}
-            - "/*"
+        - "arn:aws:s3:::*/*"
+    - Effect: "Allow"
+      Action:
+        - "sns:Publish"
+      Resource:
+        - "arn:aws:sns:us-east-1:272016194640:dispatch-events-dawilcox"
     - Effect: "Allow"
       Action:
         - dynamodb:PutItem
-      Resource: arn:aws:dynamodb:us-east-1:*:table/${env:USER}-character-counts
+      Resource:
+        - "arn:aws:dynamodb:us-east-1:272016194640:table/dawilcox-character-counts"
 #        Fn::Join:
 #          - ""
 #          - - "arn:aws:dynamodb:us-east-1:*:table/"
@@ -73,14 +74,16 @@ functions:
   textmessageprocess:
     handler: handler.textmessageprocess
     events:
-      - s3:
-          bucket:
-            Fn::Join:
-              - ""
-              -
-                - ${self:custom.s3BucketPrefix}
-                - ${env:USER}
-          event: s3:ObjectCreated:*
+      - sns: dispatch-events-dawilcox
+#      - s3:
+#          bucket: my-text-messages9-dawilcox
+#          bucket:
+#            Fn::Join:
+#              - ""
+#              -
+#                - ${self:custom.s3BucketPrefix}
+#                - ${env:USER}
+#          event: s3:ObjectCreated:*
 
 
 resources:
@@ -111,22 +114,7 @@ resources:
 #      - sns: greeter-topic
 #      - stream: arn:aws:dynamodb:region:XXXXXX:table/foo/stream/1970-01-01T00:00:00.000
 
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-text-messages3-dawilcox
-
-
-# you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
+    MyMessages:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: my-text-messages10-dawilcox
