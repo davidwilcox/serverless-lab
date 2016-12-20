@@ -22,15 +22,16 @@ module.exports.textmessagecreate = (event, context, callback) => {
 	callback({msg:"Malformed Request:",
 		  request:event});
     }
+    let key = guid();
     s3bucket.upload({
-	Key: guid() + ".txt",
+	Key: key,
 	Body: event.queryStringParameters.textToUpload},
 		    function(err, data) {
 			if ( err ) {
 			    return callback(err);
 			} else {
 			    sns.publish({
-				Message: guid() + ".txt",
+				Message: key,
 				TopicArn: "arn:aws:sns:us-east-1:272016194640:dispatch-events-dawilcox"
 			    }, function(err, data) {
 				if ( err ) {
