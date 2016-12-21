@@ -51,7 +51,7 @@ module.exports.textmessagecreate = (event, context, callback) => {
 var docClient = new AWS.DynamoDB.DocumentClient();
 
 module.exports.textmessageprocess = (event, context, callback) => {
-    /*
+
     console.log(JSON.stringify(event));
     return callback(null, {
 	statusCode: 200,
@@ -59,7 +59,7 @@ module.exports.textmessageprocess = (event, context, callback) => {
 	    event
 	})
     });
-    */
+    /*
     var filename = event.Records[0].Sns.Message;
 
     var s3GetParams = {
@@ -91,4 +91,5 @@ module.exports.textmessageprocess = (event, context, callback) => {
 	    });
 	}
     });
+    */
 };
