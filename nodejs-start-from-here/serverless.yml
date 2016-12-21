@@ -1,0 +1,9 @@
+service: ${env:USER}-aws-nodejs
+
+provider:
+  name: aws
+  runtime: nodejs4.3
+
+functions:
+  hello:
+    handler: handler.hello
