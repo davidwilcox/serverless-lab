@@ -14,8 +14,7 @@ function guid() {
 	s4() + '-' + s4() + s4() + s4();
 }
 
-// UPDATE THIS WITH YOUR USERNAME
-var username = 'dawilcox10000';
+var username = process.env.USERNAME;
 
 var bucket_name = 'my-text-messages-' + username;
 var s3bucket = new AWS.S3({params: {Bucket: bucket_name}});
@@ -25,7 +24,7 @@ module.exports.textmessagecreate = (event, context, callback) => {
 	callback({msg:"Malformed Request:",
 		  request:event});
     }
-    let key = guid();
+    let key = guid() + ".txt";
     s3bucket.upload({
 	Key: key,
 	Body: event.queryStringParameters.textToUpload},
@@ -40,6 +39,7 @@ module.exports.textmessagecreate = (event, context, callback) => {
 				if ( err ) {
 				    return callback(err);
 				}
+                                data.Message = key;
 				return callback(null,{
 				    statusCode: 200,
 				    body: JSON.stringify(data)
@@ -56,13 +56,6 @@ var docClient = new AWS.DynamoDB.DocumentClient();
 module.exports.textmessageprocess = (event, context, callback) => {
 
     console.log(JSON.stringify(event));
-    return callback(null, {
-	statusCode: 200,
-	input: JSON.stringify({
-	    event
-	})
-    });
-    /*
     var filename = event.Records[0].Sns.Message;
 
     var s3GetParams = {
@@ -70,8 +63,7 @@ module.exports.textmessageprocess = (event, context, callback) => {
     };
     console.log(s3GetParams);
     s3bucket.getObject(s3GetParams, function(err, data) {
-	console.log(err);
-	console.log(data);
+	console.log(JSON.stringify(err));
 	if ( err ) {
 	    return callback(err);
 	} else {
@@ -84,8 +76,10 @@ module.exports.textmessageprocess = (event, context, callback) => {
 	    };
 	    docClient.put(dynamoParams, function(err, data) {
 		if ( err ) {
+                    console.log(JSON.stringify(err));
 		    callback(err);
 		} else {
+                    console.log("success");
 		    callback(null, {
 			statusCode: 200,
 			body: "success"
@@ -94,5 +88,4 @@ module.exports.textmessageprocess = (event, context, callback) => {
 	    });
 	}
     });
-    */
 };

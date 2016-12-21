@@ -7,3 +7,9 @@ provider:
 functions:
   hello:
     handler: handler.hello
+    environment:
+      TABLE_NAME: tableName2
+    events:
+      - http:
+          path: hello
+          method: get

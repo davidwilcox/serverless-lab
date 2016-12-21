@@ -4,6 +4,9 @@ provider:
   name: aws
   runtime: nodejs4.3
 
+  environment:
+    USERNAME: ${env:USER}
+
   iamRoleStatements:
     - Effect: "Allow"
       Action:

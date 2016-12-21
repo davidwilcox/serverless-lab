@@ -6,6 +6,7 @@ module.exports.hello = (event, context, callback) => {
     body: JSON.stringify({
       message: 'Go Serverless v1.0! Your function executed successfully!',
       input: event,
+      env: process.env
     }),
   };
 
