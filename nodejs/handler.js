@@ -14,7 +14,10 @@ function guid() {
 	s4() + '-' + s4() + s4() + s4();
 }
 
-var bucket_name = 'my-text-messages-dawilcox';
+// UPDATE THIS WITH YOUR USERNAME
+var username = 'dawilcox10000';
+
+var bucket_name = 'my-text-messages-' + username;
 var s3bucket = new AWS.S3({params: {Bucket: bucket_name}});
 
 module.exports.textmessagecreate = (event, context, callback) => {
@@ -32,7 +35,7 @@ module.exports.textmessagecreate = (event, context, callback) => {
 			} else {
 			    sns.publish({
 				Message: key,
-				TopicArn: "arn:aws:sns:us-east-1:272016194640:dispatch-events-dawilcox"
+				TopicArn: "arn:aws:sns:us-east-1:272016194640:dispatch-events-" + username
 			    }, function(err, data) {
 				if ( err ) {
 				    return callback(err);
@@ -73,7 +76,7 @@ module.exports.textmessageprocess = (event, context, callback) => {
 	    return callback(err);
 	} else {
 	    var dynamoParams = {
-		TableName: "dawilcox-character-counts",
+		TableName: username + "-character-counts",
 		Item: {
 		    id: filename,
 		    count: parseInt(data.ContentLength)
