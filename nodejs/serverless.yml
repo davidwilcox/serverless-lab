@@ -32,17 +32,17 @@ provider:
         - "s3:PutObject"
         - "s3:GetObject"
       Resource:
-        - "arn:aws:s3:::my-text-messagess-dawilcox/*"
+        - "arn:aws:s3:::my-text-messagess-${env:USER}/*"
     - Effect: "Allow"
       Action:
         - "sns:Publish"
       Resource:
-        - "arn:aws:sns:us-east-1:272016194640:dispatch-events-dawilcox"
+        - "arn:aws:sns:us-east-1:272016194640:dispatch-events-${env:USER}"
     - Effect: "Allow"
       Action:
         - dynamodb:PutItem
       Resource:
-        - "arn:aws:dynamodb:us-east-1:272016194640:table/dawilcox-character-counts"
+        - "arn:aws:dynamodb:us-east-1:272016194640:table/${env:USER}-character-counts"
 
 # you can add packaging information here
 #package:
@@ -60,7 +60,7 @@ functions:
   textmessageprocess:
     handler: handler.textmessageprocess
     events:
-      - sns: dispatch-events-dawilcox
+      - sns: dispatch-events-${env:USER}
 
 resources:
   Resources:
@@ -76,9 +76,9 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-        TableName: "dawilcox-character-counts"
+        TableName: "${env:USER}-character-counts"
 
     MyMessages:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: my-text-messagess-dawilcox
+        BucketName: my-text-messagess-${env:USER}
