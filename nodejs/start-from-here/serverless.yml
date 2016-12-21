@@ -1,4 +1,5 @@
 custom:
+  # Windows users should change this to ${env:USERNAME}
   user: ${env:USER}
 
 service: ${self:custom.user}-aws-nodejs
@@ -10,9 +11,3 @@ provider:
 functions:
   hello:
     handler: handler.hello
-    environment:
-      TABLE_NAME: tableName2
-    events:
-      - http:
-          path: hello
-          method: get

@@ -1,4 +1,5 @@
 custom:
+  # Windows users should change this to ${env:USERNAME}
   user: ${env:USER}
 
 service: ${self:custom.user}-aws-nodejs
