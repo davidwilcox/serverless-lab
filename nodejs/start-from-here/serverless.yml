@@ -1,4 +1,7 @@
-service: ${env:USER}-aws-nodejs
+custom:
+  user: ${env:USER}
+
+service: ${self:custom.user}-aws-nodejs
 
 provider:
   name: aws

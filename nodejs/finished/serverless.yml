@@ -1,11 +1,14 @@
-service: ${env:USER}-aws-nodejs
+custom:
+  user: ${env:USER}
+
+service: ${self:custom.user}-aws-nodejs
 
 provider:
   name: aws
   runtime: nodejs4.3
 
   environment:
-    USERNAME: ${env:USER}
+    USERNAME: ${self:custom.user}
 
   iamRoleStatements:
     - Effect: "Allow"
@@ -13,17 +16,17 @@ provider:
         - "s3:PutObject"
         - "s3:GetObject"
       Resource:
-        - "arn:aws:s3:::my-text-messages-${env:USER}/*"
+        - "arn:aws:s3:::my-text-messages-${self:custom.user}/*"
     - Effect: "Allow"
       Action:
         - "sns:Publish"
       Resource:
-        - "arn:aws:sns:us-east-1:272016194640:dispatch-events-${env:USER}"
+        - "arn:aws:sns:us-east-1:272016194640:dispatch-events-${self:custom.user}"
     - Effect: "Allow"
       Action:
         - dynamodb:PutItem
       Resource:
-        - "arn:aws:dynamodb:us-east-1:272016194640:table/${env:USER}-character-counts"
+        - "arn:aws:dynamodb:us-east-1:272016194640:table/${self:custom.user}-character-counts"
 
 functions:
   textmessagecreate:
@@ -35,7 +38,7 @@ functions:
   textmessageprocess:
     handler: handler.textmessageprocess
     events:
-      - sns: dispatch-events-${env:USER}
+      - sns: dispatch-events-${self:custom.user}
 
 resources:
   Resources:
@@ -51,9 +54,9 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-        TableName: "${env:USER}-character-counts"
+        TableName: "${self:custom.user}-character-counts"
 
     MyMessages:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: my-text-messages-${env:USER}
+        BucketName: my-text-messages-${self:custom.user}
