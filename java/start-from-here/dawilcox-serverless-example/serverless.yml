@@ -1,0 +1,66 @@
+custom:
+  # Windows users should change this to ${env:USERNAME}
+  user: ${env:USER}
+
+service: ${self:custom.user}-aws-java-maven
+
+provider:
+  name: aws
+  runtime: java8
+  timeout: 12
+
+  environment:
+    USERNAME: ${self:custom.user}
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:GetObject"
+        - "s3:PutObject"
+      Resource:
+        - "arn:aws:s3:::my-text-messages-${self:custom.user}/*" 
+    - Effect: "Allow"
+      Action:
+        - "sns:Publish"
+      Resource:
+        - "arn:aws:sns:us-east-1:272016194640:dispatch-events-${self:custom.user}"
+    - Effect: "Allow"
+      Action:
+        - dynamodb:PutItem
+      Resource:
+        - "arn:aws:dynamodb:us-east-1:*:table/${self:custom.user}-character-counts"
+
+functions:
+  textmessagecreate:
+    handler: com.serverless.TextMessageCreate
+    events:
+      - http:
+          path: textmessagecreate
+          method: get
+  textmessageprocess:
+    handler: com.serverless.TextMessageProcess
+    events:
+      - sns: dispatch-events-${self:custom.user}
+
+package:
+  artifact: target/hello-dev.jar
+
+resources:
+  Resources:
+    NewResource:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: my-text-messages-${self:custom.user}
+    CharacterCounts:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        KeySchema:
+          - AttributeName: "id"
+            KeyType: "HASH"
+        AttributeDefinitions:
+          - AttributeName: "id"
+            AttributeType: "S"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: "${self:custom.user}-character-counts"
