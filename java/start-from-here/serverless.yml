@@ -1,0 +1,21 @@
+custom:
+  # Windows users should change this to ${env:USERNAME}
+  user: ${env:USER}
+
+service: ${self:custom.user}-aws-java-maven
+
+provider:
+  name: aws
+  runtime: java8
+
+  environment:
+    USERNAME: ${self:custom.user}
+
+
+package:
+  artifact: target/hello-dev.jar
+
+functions:
+  hello:
+    handler: com.serverless.Handler
+
