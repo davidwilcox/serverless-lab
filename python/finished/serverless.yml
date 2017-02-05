@@ -1,0 +1,66 @@
+custom:
+  # Windows users should change this to ${env:USERNAME}
+  user: ${env:USER}
+
+service: ${self:custom.user}-aws-python
+
+provider:
+  name: aws
+  runtime: python2.7
+
+  environment:
+    USERNAME: ${self:custom.user}
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:GetObject"
+        - "s3:PutObject"
+      Resource:
+        - "arn:aws:s3:::my-text-messages-${self:custom.user}/*" 
+
+    - Effect: "Allow"
+      Action:
+        - "sns:Publish"
+      Resource:
+        - "arn:aws:sns:us-east-1:551404431665:dispatch-events-${self:custom.user}"
+
+    - Effect: "Allow"
+      Action:
+        - dynamodb:PutItem
+      Resource:
+        - "arn:aws:dynamodb:us-east-1:*:table/${self:custom.user}-character-counts"
+
+functions:
+  textmessagecreate:
+    handler: handler.textmessagecreate
+    events:
+      - http:
+          path: textmessage/create
+          method: get
+
+  textmessageprocess:
+    handler: handler.textmessageprocess
+    events:
+      - sns: dispatch-events-${self:custom.user}
+
+resources:
+  Resources:
+    NewResource:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: my-text-messages-${self:custom.user}
+
+    CharacterCounts:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        KeySchema:
+          - AttributeName: "id"
+            KeyType: "HASH"
+        AttributeDefinitions:
+          - AttributeName: "id"
+            AttributeType: "S"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: "${self:custom.user}-character-counts"
