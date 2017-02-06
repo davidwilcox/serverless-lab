@@ -11,28 +11,23 @@ provider:
   environment:
     USERNAME: ${self:custom.user}
 
-  cfLogs: true
-
   iamRoleStatements:
     - Effect: "Allow"
       Action:
-        - "s3:GetObject"
         - "s3:PutObject"
+        - "s3:GetObject"
       Resource:
-        - "arn:aws:s3:::my-text-messages-${self:custom.user}/*" 
-
+        - "arn:aws:s3:::my-text-messages-${self:custom.user}/*"
     - Effect: "Allow"
       Action:
         - "sns:Publish"
       Resource:
-        - "arn:aws:sns:us-east-1:551404431665:dispatch-events-${self:custom.user}"
-
+        - "arn:aws:sns:us-east-1:272016194640:dispatch-events-${self:custom.user}"
     - Effect: "Allow"
       Action:
         - dynamodb:PutItem
       Resource:
-        - "arn:aws:dynamodb:us-east-1:*:table/${self:custom.user}-character-counts"
-
+        - "arn:aws:dynamodb:us-east-1:272016194640:table/${self:custom.user}-character-counts"
 
 package:
   exclude:

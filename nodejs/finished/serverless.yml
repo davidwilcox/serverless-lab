@@ -11,8 +11,6 @@ provider:
   environment:
     USERNAME: ${self:custom.user}
 
-  cfLogs: true
-
   iamRoleStatements:
     - Effect: "Allow"
       Action:
