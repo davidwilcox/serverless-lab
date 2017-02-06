@@ -22,7 +22,7 @@ def textmessagecreate(event, context):
 
     # THESE TWO LINES WERE ADDED
     sns = boto3.client('sns')
-    snsresp = sns.publish(Message=key,TopicArn="arn:aws:sns:us-east-1:551404431665:dispatch-events-" + username);
+    snsresp = sns.publish(Message=key,TopicArn="arn:aws:sns:us-east-1:272016194640:dispatch-events-" + username);
 
     body = {
         "message": "Uploaded Successfully",
