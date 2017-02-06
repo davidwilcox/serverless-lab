@@ -11,6 +11,8 @@ provider:
   environment:
     USERNAME: ${self:custom.user}
 
+  cfLogs: true
+
 functions:
   hello:
     handler: handler.hello

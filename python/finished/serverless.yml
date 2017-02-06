@@ -11,6 +11,8 @@ provider:
   environment:
     USERNAME: ${self:custom.user}
 
+  cfLogs: true
+
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -30,6 +32,11 @@ provider:
         - dynamodb:PutItem
       Resource:
         - "arn:aws:dynamodb:us-east-1:*:table/${self:custom.user}-character-counts"
+
+
+package:
+  exclude:
+    - serverless/**
 
 functions:
   textmessagecreate:

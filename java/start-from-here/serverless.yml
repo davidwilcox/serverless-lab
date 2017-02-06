@@ -11,6 +11,8 @@ provider:
   environment:
     USERNAME: ${self:custom.user}
 
+  cfLogs: true
+
 
 package:
   artifact: target/hello-dev.jar
